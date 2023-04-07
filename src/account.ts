@@ -49,15 +49,16 @@ async function upsert_steam_account_information(ctx:Context,nickname:string,user
       user_name:steam_name,
       platform_names:binding.platform_names
     })
+  }else{
+    await ctx.database.create('steam_bindings',{
+      user_id:user_id,
+      steam_id:steam_id,
+      user_name:steam_name,
+      platform_names:{
+        [channel_id]:nickname
+      }
+    })
   }
-  await ctx.database.create('steam_bindings',{
-    user_id:user_id,
-    steam_id:steam_id,
-    user_name:steam_name,
-    platform_names:{
-      [channel_id]:nickname
-    }
-  })
 }
 
 export async function bind_account(ctx:Context,session:Session<'id'|'default_steam_id'>,id:string,client:Quester,api_key){
