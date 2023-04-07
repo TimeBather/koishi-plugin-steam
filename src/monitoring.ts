@@ -37,8 +37,12 @@ async function end_session(ctx:Context,info){
   const activity = (await ctx.database.get('steam_activities',{
     id:session.target_activity,
   }))?.[0]
-  if(!activity)
+  if(!activity){
+    await ctx.database.remove('steam_game_sessions',{
+      steam_id:info.steamid
+    })
     return
+  }
   const duration = ((new Date).getTime() - activity.begin.getTime())/1000
   await ctx.database.set('steam_activities',{
     id:session.target_activity,
@@ -83,6 +87,7 @@ async function update_player_status(ctx:Context,response){
   const session = (await ctx.database.get('steam_game_sessions',{
     steam_id:response.steamid
   }))?.[0]
+  if(!response.gameid && !session) return
   if(response.gameid!='IDLE' && response.gameid && response.gameextrainfo){
     await ctx.database.upsert('steam_games',[
       {
@@ -109,12 +114,19 @@ async function update_player_status(ctx:Context,response){
 }
 
 async function update_last_update(ctx: Context,player) {
-  await ctx.database.upsert('steam_game_sessions',[
+  if(!((await ctx.database.get('steam_game_sessions',{steam_id:player.steamid}))?.[0]))
+    return
+  if(!player.steamid){
+    return
+  }
+  await ctx.database.set('steam_game_sessions',
     {
-      steam_id:player.steamid,
+      steam_id:player.steamid
+    },
+    {
       last_update:new Date
     }
-  ])
+  )
 }
 
 export function start_monitor(ctx:Context,client:Quester,key:string){
