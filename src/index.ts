@@ -34,6 +34,8 @@ export function apply(ctx: Context,config:Config) {
     endpoint: 'https://api.steampowered.com/',
   })
 
+  const logger = ctx.logger('steam')
+
   ctx.command("steam.bind <id:string> [name:string]")
     .userFields(['id', 'default_steam_id'])
     .option('-s', '绑定为自己的昵称')
@@ -98,5 +100,5 @@ export function apply(ctx: Context,config:Config) {
   start_monitor(ctx,client,config.api_key,{
     interval:config.monitor_interval??10,
     debounce:config.monitor_debounce??3
-  })
+  },logger)
 }

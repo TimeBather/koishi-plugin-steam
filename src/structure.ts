@@ -18,6 +18,7 @@ export interface SteamGameSession{
   game_id: string
   target_activity: number
   last_update:Date
+  debounce: number
 }
 
 export interface SteamBinding{
@@ -91,7 +92,8 @@ export function prepare_database(ctx:Context){
     steam_id: 'string',
     game_id: 'string',
     last_update: 'timestamp',
-    target_activity: 'integer'
+    target_activity: 'integer',
+    debounce: 'integer'
   },{
     primary:['steam_id']
   })
