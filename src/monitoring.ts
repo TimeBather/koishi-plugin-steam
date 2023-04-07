@@ -129,7 +129,7 @@ async function update_last_update(ctx: Context,player) {
   )
 }
 
-export function start_monitor(ctx:Context,client:Quester,key:string){
+export function start_monitor(ctx:Context,client:Quester,key:string,config){
   ctx.setInterval(async ()=>{
     const steam_ids = await ctx.database.get("steam_bindings",{})
     const steam_id_list = deduplicate(steam_ids.map((binding:SteamBinding)=>binding.steam_id))
@@ -140,5 +140,5 @@ export function start_monitor(ctx:Context,client:Quester,key:string){
       await update_player_status(ctx,player)
       await update_last_update(ctx,player)
     }
-  },10*1000)
+  },config.interval*1000)
 }

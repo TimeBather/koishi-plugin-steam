@@ -14,10 +14,14 @@ export const using = [ 'database','puppeteer' ]
 
 export interface Config {
   api_key: string
+  monitor_interval: number
+  monitor_debounce: number
 }
 
 export const Config: Schema<Config> = Schema.object({
-  api_key:Schema.string()
+  api_key:Schema.string().description("Steam Web API Key"),
+  monitor_interval:Schema.number().description("监控间隔(秒)").min(5).max(300).default(10),
+  monitor_debounce:Schema.number().description("监控防抖(次)").min(0).max(10).default(3)
 })
 
 function get_nickname(session:Session){
@@ -27,7 +31,7 @@ function get_nickname(session:Session){
 export function apply(ctx: Context,config:Config) {
 
   const client = ctx.http.extend({
-    endpoint:'https://api.steampowered.com/',
+    endpoint: 'https://api.steampowered.com/',
   })
 
   ctx.command("steam.bind <id:string> [name:string]")
@@ -91,5 +95,8 @@ export function apply(ctx: Context,config:Config) {
 
   prepare_database(ctx)
 
-  start_monitor(ctx,client,config.api_key)
+  start_monitor(ctx,client,config.api_key,{
+    interval:config.monitor_interval??10,
+    debounce:config.monitor_debounce??3
+  })
 }
