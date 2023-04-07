@@ -45,9 +45,17 @@ export function apply(ctx: Context,config:Config) {
     })
 
   ctx.command("steam.list")
-    .action(({session})=>{
-
-    })
+    .userFields(['id'])
+    .action(async ({session}) => {
+      const bindings = await ctx.database.get('steam_bindings', {
+        user_id: session.user.id
+      })
+      if (bindings.length == 0)
+        return segment('at', session.userId) + " 没有绑定 Steam 账号"
+      return '您绑定了下列Steam账号:\n'+bindings.filter(binding=>binding.platform_names[session.cid]).map(binding=>{
+        return `${binding.user_name} ${binding.platform_names[session.cid]?`-> ${binding.platform_names[session.cid]} `:''}(${binding.steam_id})`
+      })
+  })
 
   ctx.command("steam.recent [id:string]")
     .userFields(['default_steam_id'])
