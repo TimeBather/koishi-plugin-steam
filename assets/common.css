@@ -1,0 +1,75 @@
+html{
+  height: 100%;
+}
+body{
+  height: 100%;
+}
+.steam-recent-wrapper{
+  position: absolute;
+  top: 0;
+  left: 0;
+  scale: 2;
+  transform-origin: top left;
+  width: 800px;
+  background: linear-gradient(135deg, rgba(74,74,74,1) 0%, rgba(0,0,0,1) 100%);
+  overflow: hidden;
+}
+.steam-recent-title-wrapper{
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 100%);
+}
+.steam-recent-title{
+  font-size: 24px;
+  color: white;
+  font-weight: bolder;
+  border-radius: 3px;
+}
+.steam-recent-calendar-container{
+  display: inline-flex;
+  border: 1px solid white;
+  padding: 3px;
+}
+.steam-recent-rank{
+  display: inline-block;
+  height: 108px;
+  width: 108px;
+}
+.steam-recent-content{
+  margin: 15px;
+  padding: 3px;
+}
+.steam-recent-rank-value{
+  color:gold;
+  font-size: 80px;
+  display: table-row;
+  align-content: center;
+}
+.steam-recent-history-container{
+  display: inline-flex;
+  margin: 5px;
+  width: 500px;
+  padding: 5px;
+  border: 1px solid white;
+  border-radius: 3px;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.steam-recent-history-item{
+  display: inline-block;
+  width: 220px;
+  height: 50px;
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid white;
+  border-radius: 3px;
+}
+.steam-recent-history-item-title{
+  color: white;
+  font-size: 20px;
+  font-weight: bolder;
+}
+.steam-recent-history-item-time{
+  color: white;
+  font-size: 16px;
+}

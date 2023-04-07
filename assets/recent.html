@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Steam Recent</title>
+  <link rel="stylesheet" href="./common.css">
+  <script src="./two.min.js"></script>
+  <script src="./common.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <div id="app" class="steam-recent steam-recent-wrapper">
+    <div class="steam-recent-title-wrapper">
+      <div class="steam-recent-title">
+        <span id="steam-username"></span> 的 Steam 动态
+      </div>
+    </div>
+
+    <div class="steam-recent-content" style="text-align: center">
+      <span style="color:white;font-size: 150%;font-weight: bolder;word-break: keep-all;overflow: hidden"><span id="steam-status"></span></span>
+    </div>
+    <div class="steam-recent-content" style="text-align: center">
+      <div class="steam-recent-calendar-container" id="steam-calendar">
+      </div>
+    </div>
+    <div class="steam-recent-content" style="text-align: center;">
+      <div class="steam-recent-timeline-container" id="steam-timeline"></div>
+    </div>
+    <!---<div class="steam-recent-content" style="text-align: center">
+      <div class="steam-recent-history-wrapper">
+        <div style="font-weight: bolder;font-size: 12px;color:white">游玩历史</div>
+        <div class="steam-recent-history-container">
+          <div class="steam-recent-history-item" style="background: green;border: 2px darkgoldenrod solid">
+            <div class="steam-recent-history-item-title">Train Simulator</div>
+            <div class="steam-recent-history-item-time"> 2小时 | 游玩中</div>
+          </div>
+          <div class="steam-recent-history-item" style="border: 2px darkgoldenrod solid">
+            <div class="steam-recent-history-item-title">Minecraft</div>
+            <div class="steam-recent-history-item-time">2小时 | 最后上线:2小时前</div>
+          </div>
+          <div class="steam-recent-history-item">
+            <div class="steam-recent-history-item-title">Muse Dash</div>
+            <div class="steam-recent-history-item-time">2小时 | 最后上线:1天前</div>
+          </div>
+          <div class="steam-recent-history-item">
+            <div class="steam-recent-history-item-title">Wallpaper Engine</div>
+            <div class="steam-recent-history-item-time">2小时 | 最后上线:2小时前</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="steam-recent-content" style="text-align: center">
+      <div style="font-weight: bolder;font-size: 12px;color:white">日志</div>
+      <div style="height:300px;overflow: hidden;border: white 1px solid;width: 80%;display:inline-block;margin: 5px;padding: 5px">
+
+        <div style="font-size:10px;color:white">2023/4/6 22:00 TimeBather 获得了 成就 First trial of ICE3 (来源:Train Simulator)</div>
+        <div style="font-size:10px;color:white">2023/4/6 22:00 TimeBather 获得了 成就 勇闯无人区(来源:Muse Dash)</div>
+        <div style="font-size:10px;color:white">2023/4/6 21:00 TimeBather 的库中新增了游戏 Muse Dash</div>
+
+      </div>
+    </div>
+--->
+    <div class="steam-recent-content" style="text-align: center">
+      <div style="font-weight: bolder;font-size: 12px;color:white">本插件与 Steam 及 Valve Corporation 及其附属公司、产品没有任何从属关系</div>
+        <div style="font-weight: bolder;font-size: 12px;color:white">Powered by Koishi Bot & koishi-plugin-steam</div>
+    </div>
+  </div>
+<script type="text/javascript">
+  function render(data){
+    var calender = new Two({
+      autostart: true,
+      height:100,
+      width:570
+    }).appendTo(document.getElementById('steam-calendar'));
+
+    calender.makeText('游戏活动图',285,11,{
+      size: 12,
+      weight: 'bold',
+      fill: '#fff'
+    })
+    let slots = generate_calender_slots(data.daily_totals)
+    for(let j=0;j<53;j++){
+      for(let i=0;i<7;i++){
+        let rect = calender.makeRectangle(30+j*10,25+i*10,8,8);
+        const slot = slots[i+j*7]
+        if(slot===-1){
+          rect.fill='transparent'
+        } else if(slot<=0){
+          rect.fill='#ebedf0'
+        }else if(slot<=0.25){
+          rect.fill='#9be9a8'
+        }else if(slot<=0.5){
+          rect.fill='#40c463'
+        }else if(slot<=0.75){
+          rect.fill='#30a14e'
+        }else{
+          rect.fill='#216e39'
+        }
+      }
+    }
+
+    const calenderText = '日一二三四五六'.split('')
+    for(let i=0;i<7;i++){
+      calender.makeText(calenderText[i], 20, 26+i*10,{
+        size: 10,
+        weight: 'bold',
+        fill: '#fff'
+      });
+    }
+
+    const timeline_fire = new Two({
+      autostart: true,
+      height:90,
+      width:700
+    })
+      .appendTo(document.getElementById('steam-timeline'))
+
+
+    timeline_fire.makeText("近期动态",350,8,{
+      size: 12,
+      weight: 'bold',
+      fill: '#fff'
+    })
+    for(let i=0;i<24*4;i++){
+      let rect = timeline_fire.makeRectangle(10+i*7,32,5,32)
+      if(data['recent'][i] === 1){
+        rect.fill='#8cff8c'
+      }else if(data['recent'][i] === 2){
+        rect.fill='red'
+      }
+    }
+    // Time
+    let timeline_offset=data['offset'];
+    for(let i=0;i<24;i++){
+      timeline_fire.makeText(i, 10+(676+timeline_offset*7+i*28)%676, 60,{
+        size: 10,
+        weight: 'bold',
+        fill: '#fff'
+      });
+    }
+    document.getElementById('steam-username').innerText = data['username']
+    document.getElementById('steam-status').innerText = data['status']
+  }
+</script>
+</body>
+</html>
