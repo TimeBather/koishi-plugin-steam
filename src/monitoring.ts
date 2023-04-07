@@ -109,7 +109,7 @@ async function update_player_status(ctx: Context, response, logger: Logger, conf
   }
   if(session?.game_id!=response.gameid){
     if(session) {
-      if(!await end_session(ctx, response, logger, session.game_id=='IDLE' && (response.gameid && response.gameid!='IDLE'),config.debounce))
+      if(!await end_session(ctx, response, logger, response.gameid && response.gameid!='IDLE',config.debounce))
         return
       if(session.game_id!='IDLE'){
         const game_name = (await ctx.database.get('steam_games',{
