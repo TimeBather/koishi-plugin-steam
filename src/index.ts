@@ -31,7 +31,7 @@ export function apply(ctx: Context,config:Config) {
   })
 
   ctx.command("steam.bind <id:string>")
-    .userFields(['id'])
+    .userFields(['id','default_steam_id'])
     .action(async ({session},id)=>{
       return await bind_account(ctx,session,id,client,config.api_key)
     })
@@ -47,7 +47,12 @@ export function apply(ctx: Context,config:Config) {
     })
 
   ctx.command("steam.recent [id:string]")
+    .userFields(['default_steam_id'])
     .action(async ({session},id)=>{
+      if(!id)
+        id = session.user.default_steam_id
+      if(!id)
+        return segment('at',session.userId) + " 请先绑定 Steam 账号"
       try{
         const summary = await get_steam_recent_info(ctx,id)
         let page = await ctx.puppeteer.page();

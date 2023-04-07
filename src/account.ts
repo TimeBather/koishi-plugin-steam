@@ -60,7 +60,7 @@ async function upsert_steam_account_information(ctx:Context,nickname:string,user
   })
 }
 
-export async function bind_account(ctx:Context,session:Session<'id'>,id:string,client:Quester,api_key){
+export async function bind_account(ctx:Context,session:Session<'id'|'default_steam_id'>,id:string,client:Quester,api_key){
   const nickname = get_nickname(session)
   const vanity_url = extract_vanity_url(id)
   const steam_id = await vanity_url_to_id(client,vanity_url ?? id,api_key) ?? (/[0-9]{8,}/.test(id)?id:null)
@@ -77,5 +77,7 @@ export async function bind_account(ctx:Context,session:Session<'id'>,id:string,c
   }
   const steam_name = player_summaries.personaname
   await upsert_steam_account_information(ctx,nickname,session.user.id,session.cid,session.platform,steam_id,steam_name)
+  if(!session.user.default_steam_id)
+    session.user.default_steam_id = steam_id
   return `绑定成功!Steam账号:${steam_name}(${steam_id})`
 }

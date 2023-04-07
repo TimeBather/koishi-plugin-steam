@@ -8,6 +8,9 @@ declare module "koishi"{
     steam_activity_summaries:SteamActivitySummary,
     steam_game_sessions:SteamGameSession
   }
+  interface User{
+    default_steam_id?:string
+  }
 }
 
 export interface SteamGameSession{
@@ -22,7 +25,6 @@ export interface SteamBinding{
   steam_id: string
   user_name: string
   platform_names: Dict<string>
-  is_default:boolean
 }
 
 export interface SteamActivity{
@@ -52,8 +54,7 @@ export function prepare_database(ctx:Context){
     user_id: 'integer',
     steam_id: 'string',
     user_name: 'string',
-    platform_names: 'json',
-    is_default: 'boolean'
+    platform_names: 'json'
   },{
     primary:['user_id','steam_id']
   })
@@ -93,5 +94,9 @@ export function prepare_database(ctx:Context){
     target_activity: 'integer'
   },{
     primary:['steam_id']
+  })
+
+  ctx.database.extend("user",{
+    default_steam_id: 'string'
   })
 }
