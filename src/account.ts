@@ -82,3 +82,29 @@ export async function bind_account(ctx:Context,session:Session<'id'|'default_ste
     session.user.default_steam_id = steam_id
   return `绑定成功!Steam账号:${steam_name}(${steam_id})`
 }
+
+export async function unbind_account(ctx:Context,session:Session<'id'>,steam_id:string){
+  const binding = (await ctx.database.get('steam_bindings',{
+    steam_id:steam_id,
+    user_id:session.user.id
+  }))?.[0]
+  if(!binding){
+    return '未找到绑定!'
+  }
+  // Delete channel
+  delete binding.platform_names[session.cid]
+  if(Object.keys(binding.platform_names).length == 0){
+    await ctx.database.remove('steam_bindings',{
+      steam_id:steam_id,
+      user_id:session.user.id
+    })
+  }else{
+    await ctx.database.set('steam_bindings',{
+      steam_id:steam_id,
+      user_id:session.user.id
+    },{
+      platform_names:binding.platform_names
+    })
+  }
+  return '解绑成功!'
+}

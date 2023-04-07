@@ -2,7 +2,7 @@ import {Context, Schema, Session} from 'koishi'
 import {} from 'koishi-plugin-puppeteer'
 import {resolve} from 'path'
 import {prepare_database, SteamBinding} from "./structure";
-import {bind_account} from "./account";
+import {bind_account, unbind_account} from "./account";
 import {start_monitor} from "./monitoring";
 import {get_steam_recent_info} from "./recent";
 import {h, segment} from "@satorijs/core";
@@ -37,8 +37,11 @@ export function apply(ctx: Context,config:Config) {
     })
 
   ctx.command("steam.unbind [id:string]")
-    .action(({session},id)=>{
-
+    .userFields(['id'])
+    .action(async ({session}, id) => {
+      if(!id)
+        return segment('at',session.userId) + " 请填写你的 Steam ID"
+      return await unbind_account(ctx, session, id)
     })
 
   ctx.command("steam.list")
