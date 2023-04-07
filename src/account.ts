@@ -61,8 +61,7 @@ async function upsert_steam_account_information(ctx:Context,nickname:string,user
   }
 }
 
-export async function bind_account(ctx:Context,session:Session<'id'|'default_steam_id'>,id:string,client:Quester,api_key){
-  const nickname = get_nickname(session)
+export async function bind_account(ctx:Context,session:Session<'id'|'default_steam_id'>,id:string,nickname:string,client:Quester,api_key){
   const vanity_url = extract_vanity_url(id)
   const steam_id = await vanity_url_to_id(client,vanity_url ?? id,api_key) ?? (/[0-9]{8,}/.test(id)?id:null)
   if(!steam_id){

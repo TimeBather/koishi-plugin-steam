@@ -30,10 +30,15 @@ export function apply(ctx: Context,config:Config) {
     endpoint:'https://api.steampowered.com/',
   })
 
-  ctx.command("steam.bind <id:string>")
-    .userFields(['id','default_steam_id'])
-    .action(async ({session},id)=>{
-      return await bind_account(ctx,session,id,client,config.api_key)
+  ctx.command("steam.bind <id:string> [name:string]")
+    .userFields(['id', 'default_steam_id'])
+    .option('-s', '绑定为自己的昵称')
+    .action(async ({session,options}, id,name) => {
+      if(!id)
+        return segment('at',session.userId) + " 请填写你的 Steam ID 或 个性化 URL"
+      if(options["-s"])
+        name = get_nickname(session)
+      return await bind_account(ctx, session, id, name, client, config.api_key)
     })
 
   ctx.command("steam.unbind [id:string]")
